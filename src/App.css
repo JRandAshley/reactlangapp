@@ -1,20 +1,19 @@
 .app{
   min-height: 100vh;
-  background-color: lightblue;
   display: flex;
-  justify-content: space-around;
+  justify-content: left;
+  padding: 10px;
 }
 
-.tweet{
-  height: 300px;
-  width: 300px;
-  background: white;
-  border-radius: 30px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
+#light{
+  background-color: lightblue;
   border: 2px solid black;
+}
+
+#dark{
+  background-color: rgb(37, 37, 37);
+  background: rgb(37, 37, 37);
+  border: 2px solid white;
 }
 
 .phoneme{
@@ -30,24 +29,51 @@
 }
 
 .float-container {
+  position: relative;
   padding: 20px;
   display: flex;
   flex-direction: row;
 }
 
-.float-child {
+.float-child, .float-child-darkMode {
+  position: relative;
   height: 300px;
   width: 300px;
-  background: white;
   border-radius: 30px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  align-items: center;
-  border: 2px solid black;
+  align-items: left;
   float: left;
-  margin: 20px;
+  margin: 5px;
   padding: 20px;
+}
+
+.float-child {
+  background: white;
+  border: 2px solid black;
+}
+
+.float-child-darkMode {
+  background: rgb(37, 37, 37);
+  border: 2px solid white;
+}
+
+nav{
+  display: flex;
+  justify-content:space-around;
+  align-items: center;
+  min-height: 10vh;
+  background: rgb(3, 3, 65);
+  color: white;
+}
+
+.nav-links{
+  width: 50%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  list-style: none;
 }
 
 .header {

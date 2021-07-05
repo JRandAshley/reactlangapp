@@ -8,13 +8,13 @@ class Phoneme extends React.Component {
         this.easyType = props.easyType; //Keyboard typeable alternative
         this.type = props.type; //Consonant or Vowel
         this.notes = props.notes;
-        this.sol = props.sol;
-        this.poa = props.poa;
-        this.moa = props.moa;
-        this.height = props.height;
-        this.backness = props.backness;
-        this.rounding = props.rounding;
-        this.tenseness = props.tenseness;
+        this.sol = props.sol; //State of the Larynx
+        this.poa = props.poa; //Place of Articulation
+        this.moa = props.moa; //Manner of Articulation
+        this.height = props.height; //Height of the Tongue
+        this.backness = props.backness; //Backness of the Tongue
+        this.rounding = props.rounding; //Roundness of the Lips
+        this.tenseness = props.tenseness; //Tenseness of the Tongue
     }
     
     render() {
@@ -48,10 +48,10 @@ class Phoneme extends React.Component {
         }
         else{ //render default
             return(
-                <div class="float-child">
-                    <h3>{this.symbol}</h3>
-                    <h3>{this.easyType}</h3>
-                    <p>{this.notes}</p>
+                <div class="float-child" id="theme">
+                    <h3>Symbol: {this.symbol}</h3>
+                    <h3>Easy Type: {this.easyType}</h3>
+                    <h3>Notes: {this.notes}</h3>
                 </div>
             );
         }
@@ -68,14 +68,13 @@ class Consonant extends Phoneme {
     }
     render(){ //render consonant
         return(
-            <div class="float-child">
-                <h3>{this.symbol}</h3>
-                <h3>{this.easyType}</h3>
-                <h3>{this.type}</h3>
-                <h3>{this.sol}</h3>
-                <h3>{this.poa}</h3>
-                <h3>{this.moa}</h3>
-                <p>{this.notes}</p>
+            <div class="float-child" id="theme">
+                <h3>Symbol: {this.symbol}</h3>
+                <h3>Easy Type: {this.easyType}</h3>
+                <h3>State of the Larynx: {this.sol}</h3>
+                <h3>Place of Articulation: {this.poa}</h3>
+                <h3>Manner of Articulation: {this.moa}</h3>
+                <h3>Notes: {this.notes}</h3>
             </div>
         );
     }
@@ -90,15 +89,14 @@ class Vowel extends Phoneme {
     }
     render(){ //render vowel
         return(
-            <div class="float-child">
-                <h3>{this.symbol}</h3>
-                <h3>{this.easyType}</h3>
-                <h3>{this.type}</h3>
-                <h3>{this.height}</h3>
-                <h3>{this.backness}</h3>
-                <h3>{this.rounding}</h3>
-                <h3>{this.tenseness}</h3>
-                <p>{this.notes}</p>
+            <div class="float-child" id="theme">
+                <h3>Symbol: {this.symbol}</h3>
+                <h3>Easy Type: {this.easyType}</h3>
+                <h3>Height of Tongue: {this.height}</h3>
+                <h3>Backness of Tongue: {this.backness}</h3>
+                <h3>Rounding of Lips: {this.rounding}</h3>
+                <h3>Tenseness of the Tongue: {this.tenseness}</h3>
+                <h3>Notes: {this.notes}</h3>
             </div>
         );
     }

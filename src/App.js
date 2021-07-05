@@ -1,15 +1,21 @@
-import React, {useState} from 'react';
-import { unstable_renderSubtreeIntoContainer } from 'react-dom';
-import Phoneme from './Phoneme';
-import Consonant from './Phoneme';
+import React, {useState, useEffect} from 'react';
+import "./App.css";
+import PhonemeManager from './PhonemeManager';
+import Testing from './Testing';
+import Nav from './Nav';
+import {BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+
 
 function App() {
     const [phonemes, setPhonemes] = useState([
         {symbol: 'A', easyType: 'a', type: '', notes: 'It is a'},
         {symbol: 'B', easyType: 'b', type: 'C', notes: 'b letter',
         sol: 'state', poa: 'place', moa: 'manner'},
-        {symbol: 'C', easyType: 'c', type: 'C', notes: 'a c'},
-        {symbol: 'I', easyType: 'i', type: '', notes: 'an I'}
+        {symbol: 'C', easyType: 'c', type: 'C', notes: 'a c',
+        sol: 'state c', poa: 'place c', moa: 'manner c'},
+        {symbol: 'I', easyType: 'i', type: '', notes: 'an I'},
+        {symbol:'O', easyType:'o', type:'V', notes:'notes',
+        height:'high', backness:'back', rounding:'round', tenseness:'tense'}
     ])
     const [consonants, setConsonants] = useState([
         {symbol: 'B', easyType: 'b', type: 'C', notes: 'b letter',
@@ -18,37 +24,47 @@ function App() {
         sol: 'state c', poa: 'place c', moa: 'manner c'}
     ])
 
+    const [theme, setTheme] = useState("light") //default page theme
+
+    {/*
+    function toggleTheme(){ //light of dark mode
+        if(theme == "light"){
+            setTheme("dark")
+        }
+        else if(theme == "dark"){
+            setTheme("light")
+        }
+        else{
+            setTheme("light")
+        }
+    }
+
+    useEffect(() => {
+        console.log('useEffect - Updating document title')
+        document.title = `The theme is ${theme}.`
+    }, [theme])
+    */}
+
+
     return (
-        <div className="app">
-            <div>
-                <h1 class="header">Phonemes</h1>
-                <div class="float-container">
-                    {phonemes.map(phoneme =>(
-                        <Phoneme symbol={phoneme.symbol} easyType={phoneme.easyType} type={phoneme.type} notes={phoneme.notes}
-                        sol={phoneme.sol} poa={phoneme.poa} moa={phoneme.moa}/>
-                    ))}
-                </div>
-
+        <Router>
+            <div className="./app" id={theme}>
+                <Nav />
+                <Switch>
+                    <Route path="/" exact component={Home} />
+                    <Route path="/phonemes" component={PhonemeManager}/>
+                    <Route path="/testing" component={Testing}/>
+                </Switch>
                 <hr />
-
-                <h1 class="header">Consonants</h1>
-                <div class="float-container">
-                    {consonants.map(consonant =>(
-                        <Consonant symbol={consonant.symbol} easyType={consonant.easyType} type={consonant.type} notes={consonant.notes}
-                        sol={consonant.sol} poa={consonant.poa} moa={consonant.moa}/>
-                    ))}
-                </div>
-
-                <hr />
-
-                <div class="float-container">
-                    <Phoneme symbol={"K"} easyType={"k"}
-                    type={"C"} notes={"notes"}
-                        sol={"state"} poa={"place"} moa={"manner"}/>
-                </div>
             </div>
-        </div>
+        </Router>
     );
 }
+
+const Home = () => (
+    <div>
+        <h1>Home Page</h1>
+    </div>
+)
 
 export default App;
