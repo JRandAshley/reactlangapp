@@ -7,23 +7,6 @@ import {BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 
 function App() {
-    const [phonemes, setPhonemes] = useState([
-        {symbol: 'A', easyType: 'a', type: '', notes: 'It is a'},
-        {symbol: 'B', easyType: 'b', type: 'C', notes: 'b letter',
-        sol: 'state', poa: 'place', moa: 'manner'},
-        {symbol: 'C', easyType: 'c', type: 'C', notes: 'a c',
-        sol: 'state c', poa: 'place c', moa: 'manner c'},
-        {symbol: 'I', easyType: 'i', type: '', notes: 'an I'},
-        {symbol:'O', easyType:'o', type:'V', notes:'notes',
-        height:'high', backness:'back', rounding:'round', tenseness:'tense'}
-    ])
-    const [consonants, setConsonants] = useState([
-        {symbol: 'B', easyType: 'b', type: 'C', notes: 'b letter',
-        sol: 'state', poa: 'place', moa: 'manner'},
-        {symbol: 'C', easyType: 'c', type: 'C', notes: 'a c',
-        sol: 'state c', poa: 'place c', moa: 'manner c'}
-    ])
-
     const [theme, setTheme] = useState("light") //default page theme
 
     {/*
