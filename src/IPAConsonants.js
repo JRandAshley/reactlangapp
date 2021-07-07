@@ -10,22 +10,33 @@ function IPAConsonants(props) {
         let row = [...new Set(phonemes
             .filter(phoneme => phoneme.moa === moaToTest))]
 
-            console.log(moaToTest)
         return row;
     }
 
     function addRowSpaces(rowPhonemes) {
         let result = []
+
         headersPOA.forEach(element => { //check what phoneme to put in each column
-            for(var i = 0; i < rowPhonemes.length; i++) { //check if each phoneme in that row matches the column
-                if (rowPhonemes[i].poa == element) {
+            var found = false; //no phonemes fit in this column yet
+            for(var i = 0; i < rowPhonemes.length; i++) { //check if any of the phoneme in that row matches the column
+                
+                if(rowPhonemes[i].poa == element) {
+                    console.log(`${rowPhonemes[i].symbol} was  in the ${element} column`)
                     result.push(rowPhonemes[i].symbol)
+                    rowPhonemes.shift()
+                    found = true;
                     break;
                 }
+                else{
+                    console.log(`${rowPhonemes[i].symbol} was not in the ${element} column`)
+                }
+                
+            }
+            if(found == false){
                 result.push("")
             }
+            console.log(result)
         });
-        console.log(result)
         return result;
     }
 
@@ -33,8 +44,6 @@ function IPAConsonants(props) {
         let uniquePOA = [...new Set(phonemes
             .filter(phoneme => phoneme.type === "C")
             .map(phoneme => (phoneme.poa)))];
-
-        console.log(uniquePOA);
 
         return uniquePOA;
     }
@@ -44,21 +53,15 @@ function IPAConsonants(props) {
             .filter(phoneme => phoneme.type === "C")
             .map(phoneme => (phoneme.moa)))];
 
-        console.log(uniqueMOA)
-
         return uniqueMOA;
     }
 
     useEffect(() => {
         const poaHeader = getConsonantHeadersPOA;
         setHeadersPOA(poaHeader);
-        console.log(headersPOA);
 
         const moaHeader = getConsonantHeadersMOA;
         setHeadersMOA(moaHeader);
-        console.log(headersMOA);
-
-        console.log(phonemes);
     }, []);
 
     return (

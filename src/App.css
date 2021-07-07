@@ -80,3 +80,7 @@ nav{
   margin-top: 20px;
   float: top;
 }
+
+table, th, td {
+  border: 1px solid black;
+}
