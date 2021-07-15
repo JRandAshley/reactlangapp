@@ -1,0 +1,65 @@
+.app{
+  min-height: 100vh;
+  display: flex;
+  justify-content: left;
+  padding: 10px;
+}
+
+#light{
+  background-color: lightblue;
+  border: 2px solid black;
+}
+
+.float-container {
+  position: relative;
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  overflow: scroll;
+
+  .float-child {
+    position: relative;
+    height: 300px;
+    width: 300px;
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: left;
+    float: left;
+    margin: 5px;
+    padding: 20px;
+    background: white;
+    border: 2px solid black;
+  }
+}
+
+nav{
+  display: flex;
+  justify-content:space-around;
+  align-items: center;
+  min-height: 10vh;
+  background: rgb(3, 3, 65);
+  color: white;
+}
+
+.nav-links{
+  width: 50%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  list-style: none;
+}
+
+.header {
+  margin-top: 20px;
+  float: top;
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+
+table {
+  width: 50%;
+}

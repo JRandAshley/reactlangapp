@@ -1,5 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import "./App.css";
+import "./App.scss";
+
+/*
+
+THIS COMPONENT IS NOT CURRENTLY IN USE
+
+*/
 
 function IPAConsonants(props) {
     const phonemes = props.array;
@@ -7,7 +13,7 @@ function IPAConsonants(props) {
     const [headersMOA, setHeadersMOA] = useState([]);
 
     function getRowContent(moaToTest){
-        let row = [...new Set(phonemes
+        let row = [...new Set(Object.values(phonemes)
             .filter(phoneme => phoneme.moa === moaToTest))]
 
         return row;
@@ -20,28 +26,22 @@ function IPAConsonants(props) {
             var found = false; //no phonemes fit in this column yet
             for(var i = 0; i < rowPhonemes.length; i++) { //check if any of the phoneme in that row matches the column
                 
-                if(rowPhonemes[i].poa == element) {
-                    console.log(`${rowPhonemes[i].symbol} was  in the ${element} column`)
+                if(rowPhonemes[i].poa === element) {
                     result.push(rowPhonemes[i].symbol)
                     rowPhonemes.shift()
                     found = true;
                     break;
                 }
-                else{
-                    console.log(`${rowPhonemes[i].symbol} was not in the ${element} column`)
-                }
-                
             }
-            if(found == false){
+            if(found === false){
                 result.push("")
             }
-            console.log(result)
         });
         return result;
     }
 
     function getConsonantHeadersPOA() {
-        let uniquePOA = [...new Set(phonemes
+        let uniquePOA = [...new Set(Object.values(phonemes)
             .filter(phoneme => phoneme.type === "C")
             .map(phoneme => (phoneme.poa)))];
 
@@ -49,7 +49,7 @@ function IPAConsonants(props) {
     }
 
     function getConsonantHeadersMOA() {
-        let uniqueMOA = [...new Set(phonemes
+        let uniqueMOA = [...new Set(Object.values(phonemes)
             .filter(phoneme => phoneme.type === "C")
             .map(phoneme => (phoneme.moa)))];
 
@@ -62,14 +62,11 @@ function IPAConsonants(props) {
 
         const moaHeader = getConsonantHeadersMOA;
         setHeadersMOA(moaHeader);
-    }, []);
+    }, [phonemes]);
 
     return (
         <div>
-            <button onClick={getConsonantHeadersPOA}>POA</button>
-            <button onClick={getConsonantHeadersMOA}>MOA</button>
-
-            <table>
+            <table class="table">
                 <tr>
                     <th>---</th>
                     {headersPOA.map( e =>
@@ -80,7 +77,9 @@ function IPAConsonants(props) {
                 <tr>
                     <th>{c}</th>
                     {addRowSpaces(getRowContent(c)).map(d => 
-                        <td>{d}</td>)}
+                        <td>
+                            <button>{d}</button>
+                        </td>)}
                 </tr>)}
             </table>
         </div>

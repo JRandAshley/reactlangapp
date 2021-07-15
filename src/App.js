@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import "./App.css";
+import React from 'react';
+import "./App.scss";
 import PhonemeManager from './PhonemeManager';
 import Testing from './Testing';
 import Nav from './Nav';
@@ -7,7 +7,7 @@ import {BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 
 function App() {
-    const [theme, setTheme] = useState("light") //default page theme
+    //const [theme, setTheme] = useState("light") //default page theme
 
     {/*
     function toggleTheme(){ //light of dark mode
@@ -31,7 +31,7 @@ function App() {
 
     return (
         <Router>
-            <div className="./app" id={theme}>
+            <div className="./app" id="light">
                 <Nav />
                 <Switch>
                     <Route path="/" exact component={Home} />

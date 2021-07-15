@@ -1,5 +1,5 @@
 import React from 'react';
-import "./App.css";
+import "./App.scss";
 
 class Phoneme extends React.Component {
     constructor(props){
@@ -19,7 +19,7 @@ class Phoneme extends React.Component {
     
     render() {
        
-        if(this.type == "C"){ //render consonant
+        if(this.type === "C"){ //render consonant
             return(
                 <div>
                     <Consonant symbol={this.symbol}
@@ -32,7 +32,7 @@ class Phoneme extends React.Component {
                 </div>
             );
         }
-        else if(this.type == "V"){ //render vowel
+        else if(this.type === "V"){ //render vowel
             return(
                 <div>
                     <Vowel symbol={this.symbol}
@@ -48,7 +48,7 @@ class Phoneme extends React.Component {
         }
         else{ //render default
             return(
-                <div class="float-child" id="theme">
+                <div class="float-child">
                     <h3>Symbol: {this.symbol}</h3>
                     <h3>Easy Type: {this.easyType}</h3>
                     <h3>Notes: {this.notes}</h3>
@@ -68,7 +68,7 @@ class Consonant extends Phoneme {
     }
     render(){ //render consonant
         return(
-            <div class="float-child" id="theme">
+            <div class="float-child">
                 <h3>Symbol: {this.symbol}</h3>
                 <h3>Easy Type: {this.easyType}</h3>
                 <h3>State of the Larynx: {this.sol}</h3>
@@ -89,7 +89,7 @@ class Vowel extends Phoneme {
     }
     render(){ //render vowel
         return(
-            <div class="float-child" id="theme">
+            <div class="float-child">
                 <h3>Symbol: {this.symbol}</h3>
                 <h3>Easy Type: {this.easyType}</h3>
                 <h3>Height of Tongue: {this.height}</h3>
