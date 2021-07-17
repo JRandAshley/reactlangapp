@@ -7,19 +7,19 @@ function PhonemeManager() { //default phonemes for development
         {symbol: 'A', easyType: 'a', type: 'V', notes: 'It is a',
         height:'low', backness:'front', rounding:'unrounded', tenseness:'lax'},
         {symbol: 'B', easyType: 'b', type: 'C', notes: 'b letter',
-        sol: 'voiced', poa: 'place', moa: 'manner'},
+        sol: 'Voiced', poa: 'Bilabial', moa: 'Plosive'},
         {symbol: 'D', easyType: 'd', type: 'C', notes: '',
-        sol: 'voiced', poa: 'place', moa: 'manner 2'},
+        sol: 'Voiced', poa: 'Alveolar', moa: 'Plosive'},
         {symbol: 'F', easyType: 'f', type: 'C', notes: '',
-        sol: 'voiced', poa: 'place 2', moa: 'manner'},
-        {symbol: 'G', easyType: 'g', type: 'C', notes: '',
-        sol: 'unvoiced', poa: 'back', moa: 'trill'},
-        {symbol: 'H', easyType: 'h', type: 'C', notes: '',
-        sol: 'unvoiced', poa: 'dental', moa: 'frikative'},
-        {symbol: 'J', easyType: 'j', type: 'C', notes: '',
-        sol: 'voiced', poa: 'dental', moa: 'trill'},
+        sol: 'Unvoiced', poa: 'Labiodental', moa: 'Fricative'},
+        {symbol: 'K', easyType: 'k', type: 'C', notes: '',
+        sol: 'Unvoiced', poa: 'Velar', moa: 'Plosive'},
+        {symbol: 'R', easyType: 'r', type: 'C', notes: '',
+        sol: 'Voiced', poa: 'Alveolar', moa: 'Trill'},
+        {symbol: 'S', easyType: 's', type: 'C', notes: '',
+        sol: 'Unvoiced', poa: 'Alveolar', moa: 'Fricative'},
         {symbol: 'C', easyType: 'c', type: 'C', notes: 'a c',
-        sol: 'unvoiced', poa: 'place c', moa: 'manner c'},
+        sol: 'Unvoiced', poa: 'Palatal', moa: 'Plosive'},
         {symbol: 'I', easyType: 'i', type: 'V', notes: 'an I',
         height:'mid', backness:'mid', rounding:'rounded', tenseness:'lax'},
         {symbol:'O', easyType:'o', type:'V', notes:'notes',
@@ -32,8 +32,8 @@ function PhonemeManager() { //default phonemes for development
     })
 
     const [errors, setErrors] = useState({
-        symbol: "", easyType: "", notes: "",
-        sol: "", poa: "", moa: ""
+        /*symbol: "", easyType: "", notes: "",
+        sol: "", poa: "", moa: ""*/
     })
 
     const updateConsonantForm = (d) => {
@@ -64,13 +64,32 @@ function PhonemeManager() { //default phonemes for development
         event.preventDefault() //prevents the page from automatically reloading
 
         const validatedErrors = validateInfo(formC)
+        console.log(validatedErrors)
 
-        setErrors(
+        /*
+        function updateErrors(validatedErrors) {
+            return new Promise(resolve => {
+                setErrors(
+                    validatedErrors, () => resolve()
+                );
+            });
+        }
+        async function callUpdateErrors(){
+            await updateErrors(validatedErrors);
+        }
+        callUpdateErrors()
+        */
+        
+        setErrors(//delayed due to being asyncronous
             validatedErrors
         )
+        
 
         let errorsFound = Object.keys(errors).length === 0 && errors.constructor === Object
 
+        console.log(errors)
+
+        errorsFound = true
         console.log(errorsFound)
         
         if(errorsFound){
@@ -131,17 +150,41 @@ function PhonemeManager() { //default phonemes for development
         let result = []
 
         headersPOA.forEach(element => { //check what phoneme to put in each column
-            var found = false; //no phonemes fit in this column yet
+            var foundUnvoiced = false; //no unvoiced phonemes fit in this column yet
+            var foundVoiced = false; //no voiced phonemes fit in this column yet
+            var phonemesInColumn = [] //both voiced and unvoiced phonemes in that column
             for(var i = 0; i < rowPhonemes.length; i++) { //check if any of the phoneme in that row matches the column
-                
-                if(rowPhonemes[i].poa === element) {
+                if(rowPhonemes[i].poa === element) { //the phoneme has that poa
+                    phonemesInColumn.push(rowPhonemes[i])
+                    rowPhonemes.splice(i, 1)
+
+                    /*
                     result.push(rowPhonemes[i])
-                    rowPhonemes.shift()
+                    rowPhonemes.splice(i, 1)
                     found = true;
                     break;
+                    */
                 }
             }
-            if(found === false){
+            for(var i = 0; i < phonemesInColumn.length; i++){//check if unvoiced of unvoiced
+                if(phonemesInColumn[i].sol === "Unvoiced"){
+                    result.push(phonemesInColumn[i])
+                    phonemesInColumn.splice(i, 1)
+                    foundUnvoiced = true
+                }
+            }
+            if(foundUnvoiced === false){
+                result.push("")
+            }
+
+            for(var i = 0; i < phonemesInColumn.length; i++){//check if voiced of unvoiced
+                if(phonemesInColumn[i].sol === "Voiced"){
+                    result.push(phonemesInColumn[i])
+                    phonemesInColumn.splice(i, 1)
+                    foundVoiced = true
+                }
+            }
+            if(foundVoiced === false){
                 result.push("")
             }
         });
@@ -267,26 +310,20 @@ function PhonemeManager() { //default phonemes for development
             */}
             <table class="table"> {/* Consonant Table */}
                 <tr>
-                    <th>---</th>
+                    <th colSpan="2">---</th>
                     {headersPOA.map( e => //headers for POA
-                        <th>{e}</th>)}
+                        <th colSpan="2">{e}</th>)}
                 </tr>
 
                 {headersMOA.map(c => //headers for MOA
                 <tr>
-                    <th>{c}</th>
+                    <th colSpan="2">{c}</th>
                     {addRowSpaces(getRowContent(c)).map(d => //row content with spaces
-                        (d.sol === "voiced")
-                        ?<td align = "right">
-                            <button onClick={() => updateConsonantForm(d)}>{d.sol}</button>
+                        <td align= "center" width= "60px" height= "40px">
+                            <button>{d.symbol}</button>
                         </td>
-                        :(d.sol === "unvoiced")
-                        ?<td align = "left">
-                            <button onClick={() => updateConsonantForm(d)}>{d.sol}</button>
-                        </td>
-                        :<td align = "center">
-                            <button onClick={() => updateConsonantForm(d)}>{d.sol}</button>
-                        </td>)}
+                            
+                        )}
 
                         {/*
                         (d.sol === "Voiced")

@@ -10,7 +10,7 @@ function Nav() {
 
     return (
         <nav>
-            <h3>Logo</h3>
+            <img src="langIcon.png" alt="Logo" width="50"/>
             <ul className="nav-links">
                 <Link style={navStyle} to="/">
                     <li>Home</li>
