@@ -46,7 +46,10 @@ function App() {
 
 const Home = () => (
     <div>
-        <h1>Home Page</h1>
+        <h1>Language Tracker</h1>
+        <p>The purpose of this application is to aid 
+            linguists and constructed language builders to be able to easily 
+            record and reference sounds, words, grammer, and meaning.</p>
     </div>
 )
 

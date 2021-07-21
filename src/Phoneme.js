@@ -11,10 +11,9 @@ class Phoneme extends React.Component {
         this.sol = props.sol; //State of the Larynx
         this.poa = props.poa; //Place of Articulation
         this.moa = props.moa; //Manner of Articulation
-        this.height = props.height; //Height of the Tongue
+        this.height = props.height; //Height of the Tongue  Mid-Vowels are Lax
         this.backness = props.backness; //Backness of the Tongue
         this.rounding = props.rounding; //Roundness of the Lips
-        this.tenseness = props.tenseness; //Tenseness of the Tongue
     }
     
     render() {
@@ -41,8 +40,7 @@ class Phoneme extends React.Component {
                     notes={this.notes}
                     height={this.height}
                     backness={this.backness}
-                    rounding={this.rounding}
-                    tenseness={this.tenseness}/>
+                    rounding={this.rounding}/>
                 </div>
             );
         }
@@ -85,7 +83,6 @@ class Vowel extends Phoneme {
         this.height = props.height;
         this.backness = props.backness;
         this.rounding = props.rounding;
-        this.tenseness = props.tenseness;
     }
     render(){ //render vowel
         return(
@@ -95,7 +92,6 @@ class Vowel extends Phoneme {
                 <h3>Height of Tongue: {this.height}</h3>
                 <h3>Backness of Tongue: {this.backness}</h3>
                 <h3>Rounding of Lips: {this.rounding}</h3>
-                <h3>Tenseness of the Tongue: {this.tenseness}</h3>
                 <h3>Notes: {this.notes}</h3>
             </div>
         );

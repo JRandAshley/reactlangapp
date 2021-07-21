@@ -5,7 +5,7 @@ import "./App.scss";
 function PhonemeManager() { //default phonemes for development
     const [phonemes, setPhonemes] = useState([
         {symbol: 'A', easyType: 'a', type: 'V', notes: 'It is a',
-        height:'low', backness:'front', rounding:'unrounded', tenseness:'lax'},
+        height:'Low', backness:'Front', rounding:'Unrounded'},
         {symbol: 'B', easyType: 'b', type: 'C', notes: 'b letter',
         sol: 'Voiced', poa: 'Bilabial', moa: 'Plosive'},
         {symbol: 'D', easyType: 'd', type: 'C', notes: '',
@@ -21,9 +21,13 @@ function PhonemeManager() { //default phonemes for development
         {symbol: 'C', easyType: 'c', type: 'C', notes: 'a c',
         sol: 'Unvoiced', poa: 'Palatal', moa: 'Plosive'},
         {symbol: 'I', easyType: 'i', type: 'V', notes: 'an I',
-        height:'mid', backness:'mid', rounding:'rounded', tenseness:'lax'},
+        height:'Mid', backness:'Central', rounding:'Rounded'},
         {symbol:'O', easyType:'o', type:'V', notes:'notes',
-        height:'high', backness:'back', rounding:'rounded', tenseness:'tense'}
+        height:'High', backness:'Back', rounding:'Rounded'},
+        {symbol: 'U', easyType: 'u', type: 'V', notes: 'It is a',
+        height:'Low', backness:'Front', rounding:'Rounded'},
+        {symbol: 'E', easyType: 'e', type: 'V', notes: 'It is a',
+        height:'Low', backness:'Central', rounding:'Unrounded'}
     ])
 
     const [formC, setFormC] = useState({//consonant form contents
@@ -31,24 +35,9 @@ function PhonemeManager() { //default phonemes for development
         sol: "Select One", poa: "Select One", moa: "Select One"
     })
 
-    const [errors, setErrors] = useState({
-        /*symbol: "", easyType: "", notes: "",
-        sol: "", poa: "", moa: ""*/
-    })
-
-    const updateConsonantForm = (d) => {
-        console.log(d)
-        //setCurrentConsonant(d)
-        setFormC(prevState => ({
-            ...prevState,
-            symbol: d.symbol,
-            easyType: d.easyType,
-            notes: d.notes,
-            sol: d.sol,
-            poa: d.poa,
-            moa: d.moa
-        }))
-        console.log(formC)
+    let errorsC = {
+        //symbol: "", easyType: "", sol: "", poa: "", moa: "",
+        //uniqueSymbol: "", uniqueEasyType: "", inUse: ""
     }
 
     const handleChange = (event) => {
@@ -66,38 +55,39 @@ function PhonemeManager() { //default phonemes for development
         const validatedErrors = validateInfo(formC)
         console.log(validatedErrors)
 
-        /*
-        function updateErrors(validatedErrors) {
-            return new Promise(resolve => {
-                setErrors(
-                    validatedErrors, () => resolve()
-                );
-            });
-        }
-        async function callUpdateErrors(){
-            await updateErrors(validatedErrors);
-        }
-        callUpdateErrors()
-        */
-        
-        setErrors(//delayed due to being asyncronous
-            validatedErrors
-        )
+        errorsC = validatedErrors;
         
 
-        let errorsFound = Object.keys(errors).length === 0 && errors.constructor === Object
+        let errorsFound = !(Object.keys(errorsC).length === 0 && errorsC.constructor === Object)
 
-        console.log(errors)
+        console.log(errorsC)
 
-        errorsFound = true
+        //errorsFound = true
         console.log(errorsFound)
         
-        if(errorsFound){
+        if(!errorsFound){
             setPhonemes(prevState => ([
                 ...prevState,
                 formC
             ]))
         }
+
+        if (typeof errorsC.symbol != 'undefined'){document.getElementById("symbol").innerHTML = errorsC.symbol;}
+        else{document.getElementById("symbol").innerHTML = "";}
+        if (typeof errorsC.easyType != 'undefined'){document.getElementById("easyType").innerHTML = errorsC.easyType;}
+        else{document.getElementById("easyType").innerHTML = "";}
+        if (typeof errorsC.sol != 'undefined'){document.getElementById("sol").innerHTML = errorsC.sol;}
+        else{document.getElementById("sol").innerHTML = "";}
+        if (typeof errorsC.poa != 'undefined'){document.getElementById("poa").innerHTML = errorsC.poa;}
+        else{document.getElementById("poa").innerHTML = "";}
+        if (typeof errorsC.moa != 'undefined'){document.getElementById("moa").innerHTML = errorsC.moa;}
+        else{document.getElementById("moa").innerHTML = "";}
+        if (typeof errorsC.uniqueSymbol != 'undefined'){document.getElementById("uniqueSymbol").innerHTML = errorsC.uniqueSymbol;}
+        else{document.getElementById("uniqueSymbol").innerHTML = "";}
+        if (typeof errorsC.uniqueEasyType != 'undefined'){document.getElementById("uniqueEasyType").innerHTML = errorsC.uniqueEasyType;}
+        else{document.getElementById("uniqueEasyType").innerHTML = "";}
+        if (typeof errorsC.inUse != 'undefined'){document.getElementById("inUse").innerHTML = errorsC.inUse;}
+        else{document.getElementById("inUse").innerHTML = "";}
     }
 
     const validateInfo = (values) => {
@@ -133,21 +123,27 @@ function PhonemeManager() { //default phonemes for development
         return infoErrors;
     }
 
+    /////////////////////////////////////////////////////////////////
+
     //headers for consonants table
     const [headersPOA, setHeadersPOA] = useState([]);
     const [headersMOA, setHeadersMOA] = useState([]);
 
-    function getRowContent(moaToTest){// get consonant table row contents
-        //let row = [...new Set(Object.values(phonemes)
-        //    .filter(phoneme => phoneme.moa === moaToTest))]
+    //headers for vowel table
+    const [headersBackness, setHeadersBackness] = useState([]);
+    const [headersHeight, setHeadersHeight] = useState([]);
 
+    ///////////////////////////////////////////////////////////////
+
+    function getRowContentC(moaToTest){// get consonant table row contents
         let row = Object.values(phonemes)
             .filter(phoneme => phoneme.moa === moaToTest)
         return row;
     }
 
-    function addRowSpaces(rowPhonemes) {// add spacing to consonant table rows
-        let result = []
+    function addRowSpacesC(rowPhonemes) {// add spacing to consonant table rows
+        var result = [];
+        result.splice(0, result.length)
 
         headersPOA.forEach(element => { //check what phoneme to put in each column
             var foundUnvoiced = false; //no unvoiced phonemes fit in this column yet
@@ -156,14 +152,7 @@ function PhonemeManager() { //default phonemes for development
             for(var i = 0; i < rowPhonemes.length; i++) { //check if any of the phoneme in that row matches the column
                 if(rowPhonemes[i].poa === element) { //the phoneme has that poa
                     phonemesInColumn.push(rowPhonemes[i])
-                    rowPhonemes.splice(i, 1)
-
-                    /*
-                    result.push(rowPhonemes[i])
-                    rowPhonemes.splice(i, 1)
-                    found = true;
-                    break;
-                    */
+                    //rowPhonemes.splice(i, 1)
                 }
             }
             for(var i = 0; i < phonemesInColumn.length; i++){//check if unvoiced of unvoiced
@@ -191,10 +180,69 @@ function PhonemeManager() { //default phonemes for development
         return result;
     }
 
+
+
+    function getRowContentV(heightToTest){// get consonant table row contents
+        let row = Object.values(phonemes)
+            .filter(phoneme => phoneme.height === heightToTest)
+        return row;
+    }
+
+    function addRowSpacesV(rowPhonemes) {// add spacing to consonant table rows
+        let resultV = []
+
+        headersBackness.forEach(element => { //check what phoneme to put in each column
+            var foundUnrounded = false; //no unvoiced phonemes fit in this column yet
+            var foundRounded = false; //no voiced phonemes fit in this column yet
+            var phonemesInColumn = [] //both voiced and unvoiced phonemes in that column
+            for(var i = 0; i < rowPhonemes.length; i++) { //check if any of the phoneme in that row matches the column
+                if(rowPhonemes[i].backness === element) { //the phoneme has that poa
+                    phonemesInColumn.push(rowPhonemes[i])
+                    //rowPhonemes.splice(i, 1)
+                }
+            }
+
+            for(var i = 0; i < phonemesInColumn.length; i++){//check if unvoiced of unvoiced
+                if(phonemesInColumn[i].rounding === "Unrounded"){
+                    resultV.push(phonemesInColumn[i])
+                    phonemesInColumn.splice(i, 1)
+                    foundUnrounded = true
+                }
+            }
+
+            if(foundUnrounded === false){
+                resultV.push("")
+            }
+
+            for(var i = 0; i < phonemesInColumn.length; i++){//check if voiced of unvoiced
+                if(phonemesInColumn[i].rounding === "Rounded"){
+                    resultV.push(phonemesInColumn[i])
+                    phonemesInColumn.splice(i, 1)
+                    foundRounded = true
+                }
+            }
+
+            if(foundRounded === false){
+                resultV.push("")
+            }
+        });
+        return resultV;
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+
     function getConsonantHeadersPOA() {//get unique POA
         let uniquePOA = [...new Set(Object.values(phonemes)
             .filter(phoneme => phoneme.type === "C")
             .map(phoneme => (phoneme.poa)))];
+
+            var order = ["Bilabial", "Labiodental", "Dental", "Alveolar", 
+            "Postalveolar", "Retroflex", "Palatal", "Velar", "Uvular", 
+            "Pharyngeal", "Glottal"];
+
+            uniquePOA.sort(function (a,b){
+                return order.indexOf(a) - order.indexOf(b)
+            });
 
         return uniquePOA;
     }
@@ -204,12 +252,47 @@ function PhonemeManager() { //default phonemes for development
             .filter(phoneme => phoneme.type === "C")
             .map(phoneme => (phoneme.moa)))];
 
+            var order = ["Plosive", "Nasal", "Trill", "Tap or Flap", 
+            "Fricative", "Lateral fricative", "Approximant", "Lateral approximant"];
+
+            uniqueMOA.sort(function (a,b){
+                return order.indexOf(a) - order.indexOf(b)
+            });
+
         return uniqueMOA;
     }
 
-    useEffect(() => {
+    function getConsonantHeadersBackness() {//get unique Backness
+        let uniqueBackness = [...new Set(Object.values(phonemes)
+            .filter(phoneme => phoneme.type === "V")
+            .map(phoneme => (phoneme.backness)))];
 
-    }, [formC])
+            var order = ["Front", "Near-front", "Central", "Near-back", 
+            "Back"];
+
+            uniqueBackness.sort(function (a,b){
+                return order.indexOf(a) - order.indexOf(b)
+            });
+
+        return uniqueBackness;
+    }
+
+    function getConsonantHeadersHeight() {//get unique Height
+        let uniqueHeight = [...new Set(Object.values(phonemes)
+            .filter(phoneme => phoneme.type === "V")
+            .map(phoneme => (phoneme.height)))];
+
+            var order = ["High", "Near-high", "High-mid", "Mid", 
+            "Low-mid", "Low"];
+
+            uniqueHeight.sort(function (a,b){
+                return order.indexOf(a) - order.indexOf(b)
+            });
+
+        return uniqueHeight;
+    }
+
+    ////////////////////////////////////////////////////////////////////////
 
     useEffect(() => {//update consonant table headers when phonemes change
         const poaHeader = getConsonantHeadersPOA;
@@ -217,144 +300,174 @@ function PhonemeManager() { //default phonemes for development
 
         const moaHeader = getConsonantHeadersMOA;
         setHeadersMOA(moaHeader);
+
+        const backnessHeader = getConsonantHeadersBackness;
+        setHeadersBackness(backnessHeader);
+
+        const heightHeader = getConsonantHeadersHeight;
+        setHeadersHeight(heightHeader);
     }, [phonemes]);
 
     return (
-        <div> {/* The form to add consonants */}
-            {/*}
-            <ConsonantForm formCallback = {consonantFormCallback}
-            formData = {currentConsonant}/>
-            */}
+        <div class="flexbox-container"> {/* The form to add consonants */}
 
-            {/* The form to add consonants */}
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Phonetic Symbol</label>
-                    <input
-                        type="text"
-                        value={formC.symbol}
-                        onChange={handleChange}
-                        name="symbol"
-                    />
-                    <p style={{color: 'red'}}>{errors.symbol}</p>
+            <div class="flexbox-row-container">
+                {/* The form to add consonants */}
+                <div class="flexbox-item">
+                    <h1>Consonant Editor</h1>
+                    <form onSubmit={handleSubmit}>
+                        <div>
+                            <label>Phonetic Symbol</label>
+                            <input
+                                type="text"
+                                value={formC.symbol}
+                                onChange={handleChange}
+                                name="symbol"
+                            />
+                            <p id="symbol" style={{color: 'red'}}></p>
+                        </div>
+                        <div>
+                            <label>Easy Type</label>
+                            <input
+                                type="text"
+                                value={formC.easyType}
+                                onChange={handleChange}
+                                name="easyType"
+                            />
+                            <p id="easyType" style={{color: 'red'}}></p>
+                        </div>
+                        <div>
+                            <label class="tooltip">State of the Larynx
+                                <span class="tooltiptext">As the vocal folds vibrate, the resulting vibration produces a "buzzing" quality to the speech, called voice or voicing or pronunciation.
+                                </span>
+                            </label>
+                            <select value={formC.sol} onChange={handleChange} name="sol">
+                                <option value="Select One">Select One</option>
+                                <option value="Voiced">Voiced</option>
+                                <option value="Unvoiced">Unvoiced</option>
+                            </select>
+                            <p id="sol" style={{color: 'red'}}></p>
+                        </div>
+                        <div>
+                            <label class="tooltip">Place of Articulation
+                                <span class="tooltiptext">The place of articulation is the point of contact where an obstruction occurs in the vocal tract.
+                                </span>
+                            </label>
+
+                            <select value={formC.poa} onChange={handleChange} name="poa">
+                                <option value="Select One">Select One</option>
+                                <option value="Bilabial">Bilabial</option>
+                                <option value="Labiodental">Labiodental</option>
+                                <option value="Dental">Dental</option>
+                                <option value="Alveolar">Alveolar</option>
+                                <option value="Postalveolar">Postalveolar</option>
+                                <option value="Retroflex">Retroflex</option>
+                                <option value="Palatal">Palatal</option>
+                                <option value="Velar">Velar</option>
+                                <option value="Uvular">Uvular</option>
+                                <option value="Pharyngeal">Pharyngeal</option>
+                                <option value="Glottal">Glottal</option>
+                            </select>
+                            <p id="poa" style={{color: 'red'}}></p>
+                        </div>
+                        <div>
+                            <label class="tooltip">Manner of Articulation
+                                <span class="tooltiptext">The manner of articulation is the configuration and interaction of the articulators (speech organs such as the tongue, lips, and palate) when making a speech sound.
+                                </span>
+                            </label>
+                            <select value={formC.moa} onChange={handleChange} name="moa">
+                                <option value="Select One">Select One</option>
+                                <option value="Plosive">Plosive</option>
+                                <option value="Nasal">Nasal</option>
+                                <option value="Trill">Trill</option>
+                                <option value="Tap or Flap">Tap or Flap</option>
+                                <option value="Fricative">Fricative</option>
+                                <option value="Lateral fricative">Lateral fricative</option>
+                                <option value="Approximant">Approximant</option>
+                                <option value="Lateral approximant">Lateral approximant</option>
+                            </select>
+                            <p id="moa" style={{color: 'red'}}></p>
+                        </div>
+                        <div>
+                            <label>Notes</label>
+                            <textarea
+                                value={formC.notes}
+                                onChange={handleChange}
+                                name="notes"
+                            />
+                        </div>
+                        <p id="uniqueSymbol" style={{color: 'red'}}></p>
+                        <p id="uniqueEasyType" style={{color: 'red'}}></p>
+                        <p id="inUse" style={{color: 'red'}}></p>
+                        <button type="submit">Submit</button>
+                    </form>
                 </div>
-                <div>
-                    <label>Easy Type</label>
-                    <input
-                        type="text"
-                        value={formC.easyType}
-                        onChange={handleChange}
-                        name="easyType"
-                    />
-                    <p style={{color: 'red'}}>{errors.easyType}</p>
+                
+
+
+                <div class="flexbox-item">
+                    <table class="table"> {/* Consonant Table */}
+                        <tr>
+                            <th colSpan="2">---</th>
+                            {headersPOA.map( e => //headers for POA
+                                <th colSpan="2">{e}</th>)}
+                        </tr>
+
+                        {headersMOA.map(c => //headers for MOA
+                        <tr>
+                            <th colSpan="2">{c}</th>
+                            {addRowSpacesC(getRowContentC(c)).map(d => //row content with spaces
+                                <td align= "center" key={d.symbol} width= "60px" height= "40px">
+                                    <button>{d.symbol}</button>
+                                </td>    
+                                )}
+                        </tr>)}
+                    </table>
                 </div>
-                <div>
-                    <label>State of the Larynx</label>
-                    <select value={formC.sol} onChange={handleChange} name="sol">
-                        <option value="Select One">Select One</option>
-                        <option value="Voiced">Voiced</option>
-                        <option value="Unvoiced">Unvoiced</option>
-                    </select>
-                    <p style={{color: 'red'}}>{errors.sol}</p>
-                </div>
-                <div>
-                    <label>Place of Articulation</label>
-                    <select value={formC.poa} onChange={handleChange} name="poa">
-                        <option value="Select One">Select One</option>
-                        <option value="Bilabial">Bilabial</option>
-                        <option value="Labiodental">Labiodental</option>
-                        <option value="Dental">Dental</option>
-                        <option value="Alveolar">Alveolar</option>
-                        <option value="Postalveolar">Postalveolar</option>
-                        <option value="Retroflex">Retroflex</option>
-                        <option value="Palatal">Palatal</option>
-                        <option value="Velar">Velar</option>
-                        <option value="Uvular">Uvular</option>
-                        <option value="Pharyngeal">Pharyngeal</option>
-                        <option value="Glottal">Glottal</option>
-                    </select>
-                    <p style={{color: 'red'}}>{errors.poa}</p>
-                </div>
-                <div>
-                    <label>Manner of Articulation</label>
-                    <select value={formC.moa} onChange={handleChange} name="moa">
-                        <option value="Select One">Select One</option>
-                        <option value="Plosive">Plosive</option>
-                        <option value="Nasal">Nasal</option>
-                        <option value="Trill">Trill</option>
-                        <option value="Tap or Flap">Tap or Flap</option>
-                        <option value="Fricative">Fricative</option>
-                        <option value="Lateral fricative">Lateral fricative</option>
-                        <option value="Approximant">Approximant</option>
-                        <option value="Lateral approximant">Lateral approximant</option>
-                    </select>
-                    <p style={{color: 'red'}}>{errors.moa}</p>
-                </div>
-                <div>
-                    <label>Notes</label>
-                    <textarea
-                        value={formC.notes}
-                        onChange={handleChange}
-                        name="notes"
-                    />
-                </div>
-                <p style={{color: 'red'}}>{errors.uniqueSymbol}</p>
-                <p style={{color: 'red'}}>{errors.uniqueEasyType}</p>
-                <p style={{color: 'red'}}>{errors.inUse}</p>
-                <button type="submit">Submit</button>
-            </form>
-
-            <hr />
-            {/*
-            <IPAConsonants array = {phonemes}/>
-            */}
-            <table class="table"> {/* Consonant Table */}
-                <tr>
-                    <th colSpan="2">---</th>
-                    {headersPOA.map( e => //headers for POA
-                        <th colSpan="2">{e}</th>)}
-                </tr>
-
-                {headersMOA.map(c => //headers for MOA
-                <tr>
-                    <th colSpan="2">{c}</th>
-                    {addRowSpaces(getRowContent(c)).map(d => //row content with spaces
-                        <td align= "center" width= "60px" height= "40px">
-                            <button>{d.symbol}</button>
-                        </td>
-                            
-                        )}
-
-                        {/*
-                        (d.sol === "Voiced")
-                        ? <td align = "right">
-                        <button onClick={() => updateConsonantForm(d)}>{d.symbol}</button>
-                        </td>
-                        : <td align = "left">
-                            <button onClick={() => updateConsonantForm(d)}>{d.symbol}</button>
-                        </td>)}
-                        */}
-                </tr>)}
-            </table>
-
-
-
-            <hr /> {/* List of Consonants */}
-            <h1 class="header">Consonants</h1>
-            <div class="float-container"> 
-                {Object.values(phonemes).filter(phoneme => phoneme.type === "C").map(phoneme =>(
-                    <Phoneme symbol={phoneme.symbol} easyType={phoneme.easyType} type={phoneme.type} notes={phoneme.notes}
-                    sol={phoneme.sol} poa={phoneme.poa} moa={phoneme.moa}/>
-                ))}
             </div>
 
-            <hr /> {/* List of Vowels */}
-            <h1 class="header">Vowels</h1>
-            <div class="float-container">
-                {Object.values(phonemes).filter(phoneme => phoneme.type === "V").map(phoneme =>(
-                    <Phoneme symbol={phoneme.symbol} easyType={phoneme.easyType} type={phoneme.type} notes={phoneme.notes}
-                    height={phoneme.height} backness={phoneme.backness} rounding={phoneme.rounding} tenseness={phoneme.tenseness}/>
-                ))}
+            <div class="flexbox-row-container">
+                <div class="flexbox-item">
+                    <table class="table"> {/* Vowel Table */}
+                        <tr>
+                            <th colSpan="2">---</th>
+                            {headersBackness.map( e => //headers Backness
+                                <th colSpan="2">{e}</th>)}
+                        </tr>
+
+                        {headersHeight.map(c => //headers for Height
+                        <tr>
+                            <th colSpan="2">{c}</th>
+                            {addRowSpacesV(getRowContentV(c)).map(d => //row content with spaces
+                                <td align= "center" width= "60px" height= "40px">
+                                    <button>{d.symbol}</button>
+                                </td>    
+                                )}
+                        </tr>)}
+                    </table>
+                </div>
+            </div>
+
+            <div class="flexbox-item">
+                {/* List of Consonants */}
+                <h1 class="header">Consonants</h1>
+                <div class="float-container"> 
+                    {Object.values(phonemes).filter(phoneme => phoneme.type === "C").map(phoneme =>(
+                        <Phoneme symbol={phoneme.symbol} easyType={phoneme.easyType} type={phoneme.type} notes={phoneme.notes}
+                        sol={phoneme.sol} poa={phoneme.poa} moa={phoneme.moa}/>
+                    ))}
+                </div>
+            </div>
+
+            <div class="flexbox-item">
+                {/* List of Vowels */}
+                <h1 class="header">Vowels</h1>
+                <div class="float-container">
+                    {Object.values(phonemes).filter(phoneme => phoneme.type === "V").map(phoneme =>(
+                        <Phoneme symbol={phoneme.symbol} easyType={phoneme.easyType} type={phoneme.type} notes={phoneme.notes}
+                        height={phoneme.height} backness={phoneme.backness} rounding={phoneme.rounding} tenseness={phoneme.tenseness}/>
+                    ))}
+                </div>
             </div>
         </div>
     );

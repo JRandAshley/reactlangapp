@@ -2,12 +2,57 @@
   min-height: 100vh;
   display: flex;
   justify-content: left;
-  padding: 10px;
 }
 
 #light{
   background-color: lightblue;
   border: 2px solid black;
+}
+
+.flexbox-container {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  width: 100%;
+}
+
+.flexbox-row-container{
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.flexbox-item{
+  border: 3px solid #333;
+  background-color: white;
+  padding: 20px;
+  margin:20px;
+  align-items: flex-start;
+  max-width: 97%;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }
 
 .float-container {
@@ -31,6 +76,7 @@
     padding: 20px;
     background: white;
     border: 2px solid black;
+    font-size: 13px;
   }
 }
 
@@ -41,6 +87,7 @@ nav{
   min-height: 10vh;
   background: rgb(55, 55, 97);
   color: white;
+  border: 2px solid black;
 }
 
 .nav-links{
@@ -58,8 +105,4 @@ nav{
 
 table, th, td {
   border: 1px solid black;
-}
-
-table {
-  width: 50%;
 }
