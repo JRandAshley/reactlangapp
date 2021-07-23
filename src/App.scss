@@ -4,9 +4,16 @@
   justify-content: left;
 }
 
-#light{
-  background-color: lightblue;
+.background{
+  background: linear-gradient(to right top, #9af7e6, #0cbbd6);
+  //background-image: url(./Images/patternleaves.jpg);
+  background-repeat: repeat;
   border: 2px solid black;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
 }
 
 .flexbox-container {
@@ -14,22 +21,58 @@
   flex-wrap: wrap;
   flex-direction: column;
   width: 100%;
+  padding: 20px;
 }
 
 .flexbox-row-container{
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .flexbox-item{
-  border: 3px solid #333;
-  background-color: white;
+  border: 1px solid linear-gradient(to right bottom, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.7));
+  border-radius: 2rem;
+  background: linear-gradient(to right bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.2));
   padding: 20px;
   margin:20px;
   align-items: flex-start;
   max-width: 97%;
+  z-index: 3;
 }
+.flexbox-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.flexbox-scroller{
+  max-height: 700px;
+  max-width: 80%;
+  overflow: scroll;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  z-index: 3;
+}
+
+/*
+.circle1,
+.circle2{
+  border: 1px solid linear-gradient(to right bottom, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.7));
+  border-radius: 20rem;
+  height: 20rem;
+  width: 20rem;
+  background: red; //linear-gradient(to right bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.2));
+  position: absolute;
+  z-index: 1;
+}
+.circle1{
+  top: 30%;
+  left: 70%;
+}
+.circle2{
+  top: 70%;
+  left: 30%;
+}
+*/
 
 .tooltip {
   position: relative;
@@ -55,7 +98,7 @@
   visibility: visible;
 }
 
-.float-container {
+/*.float-container {
   position: relative;
   padding: 20px;
   display: flex;
@@ -79,13 +122,14 @@
     font-size: 13px;
   }
 }
+*/
 
 nav{
   display: flex;
   justify-content:space-around;
   align-items: center;
   min-height: 10vh;
-  background: rgb(55, 55, 97);
+  background: rgb(13, 196, 252);
   color: white;
   border: 2px solid black;
 }

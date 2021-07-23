@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import "./App.scss";
 import PhonemeManager from './PhonemeManager';
 import Testing from './Testing';
@@ -6,32 +6,24 @@ import Nav from './Nav';
 import {BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 
-function App() {
-    //const [theme, setTheme] = useState("light") //default page theme
-
-    {/*
-    function toggleTheme(){ //light of dark mode
-        if(theme == "light"){
-            setTheme("dark")
-        }
-        else if(theme == "dark"){
-            setTheme("light")
-        }
-        else{
-            setTheme("light")
-        }
+/*class App extends React.Component{
+    constructor(props) {
+        super(props)
+        this.state = {apiResponse:""}
     }
-
-    useEffect(() => {
-        console.log('useEffect - Updating document title')
-        document.title = `The theme is ${theme}.`
-    }, [theme])
-    */}
-
-
-    return (
+    callAPI(){
+        fetch("http:localhost:9000/testAPI")
+        .then(res => res.test())
+        .then(res => this.setState({apiResponse: res}));
+    }
+    componentWillMount(){
+        this.callAPI();
+    }
+}*/
+function App(){
+    return(
         <Router>
-            <div className="./app" id="light">
+            <div className="./app" class="background">
                 <Nav />
                 <Switch>
                     <Route path="/" exact component={Home} />
@@ -52,5 +44,4 @@ const Home = () => (
             record and reference sounds, words, grammer, and meaning.</p>
     </div>
 )
-
 export default App;

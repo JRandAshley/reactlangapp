@@ -3,7 +3,7 @@ import Phoneme from './Phoneme';
 import "./App.scss";
 
 function PhonemeManager() { //default phonemes for development
-    const [phonemes, setPhonemes] = useState([
+    const initialData = [
         {symbol: 'A', easyType: 'a', type: 'V', notes: 'It is a',
         height:'Low', backness:'Front', rounding:'Unrounded'},
         {symbol: 'B', easyType: 'b', type: 'C', notes: 'b letter',
@@ -28,69 +28,105 @@ function PhonemeManager() { //default phonemes for development
         height:'Low', backness:'Front', rounding:'Rounded'},
         {symbol: 'E', easyType: 'e', type: 'V', notes: 'It is a',
         height:'Low', backness:'Central', rounding:'Unrounded'}
-    ])
+    ]
+    
+    const [phonemes, setPhonemes] = useState(initialData)
 
     const [formC, setFormC] = useState({//consonant form contents
         symbol: "", easyType: "", type: "C", notes: "",
         sol: "Select One", poa: "Select One", moa: "Select One"
     })
+    const [formV, setFormV] = useState({//consonant form contents
+        symbol: "", easyType: "", type: "V", notes: "",
+        height: "Select One", backness: "Select One", rounding: "Select One"
+    })
 
-    let errorsC = {
-        //symbol: "", easyType: "", sol: "", poa: "", moa: "",
-        //uniqueSymbol: "", uniqueEasyType: "", inUse: ""
+    const [somethingChanged, setSomethingChanged] = useState(false)
+
+    let errors = {}
+
+    const forceUpdate = () => {
+        setSomethingChanged(prevState => !prevState);
+    }
+
+    const Delete = (phonemeToDelete) => {
+        var index = phonemes.indexOf(phonemeToDelete);
+        if (index > -1) { //Make sure item is present in the array, without if condition, -n indexes will be considered from the end of the array.
+            var abc = phonemes;
+            abc.splice(index, 1);
+            setPhonemes(abc);
+            forceUpdate();
+        }
     }
 
     const handleChange = (event) => {
-        const {name, value} = event.target
-        setFormC(prevState => ({
-            ...prevState,
-            [name]: value
-        }))
-        //props.formCallback(form);
+        const {name, value, id} = event.target
+
+        if(id === "C"){
+            setFormC(prevState => ({
+                ...prevState,
+                [name]: value
+            }))
+        }
+        if(id === "V"){
+            setFormV(prevState => ({
+                ...prevState,
+                [name]: value
+            }))
+        }
     }
 
     const handleSubmit = (event) => {
         event.preventDefault() //prevents the page from automatically reloading
 
-        const validatedErrors = validateInfo(formC)
-        console.log(validatedErrors)
+        const whichForm = event.target.name;
 
-        errorsC = validatedErrors;
+        const validatedErrors = validateInfo(eval(whichForm), whichForm)
+
+        errors = validatedErrors;
+        console.log(errors)
         
 
-        let errorsFound = !(Object.keys(errorsC).length === 0 && errorsC.constructor === Object)
-
-        console.log(errorsC)
-
-        //errorsFound = true
-        console.log(errorsFound)
+        let errorsFound = !(Object.keys(errors).length === 0 && errors.constructor === Object)
         
         if(!errorsFound){
             setPhonemes(prevState => ([
                 ...prevState,
-                formC
+                eval(whichForm)
             ]))
         }
 
-        if (typeof errorsC.symbol != 'undefined'){document.getElementById("symbol").innerHTML = errorsC.symbol;}
-        else{document.getElementById("symbol").innerHTML = "";}
-        if (typeof errorsC.easyType != 'undefined'){document.getElementById("easyType").innerHTML = errorsC.easyType;}
-        else{document.getElementById("easyType").innerHTML = "";}
-        if (typeof errorsC.sol != 'undefined'){document.getElementById("sol").innerHTML = errorsC.sol;}
-        else{document.getElementById("sol").innerHTML = "";}
-        if (typeof errorsC.poa != 'undefined'){document.getElementById("poa").innerHTML = errorsC.poa;}
-        else{document.getElementById("poa").innerHTML = "";}
-        if (typeof errorsC.moa != 'undefined'){document.getElementById("moa").innerHTML = errorsC.moa;}
-        else{document.getElementById("moa").innerHTML = "";}
-        if (typeof errorsC.uniqueSymbol != 'undefined'){document.getElementById("uniqueSymbol").innerHTML = errorsC.uniqueSymbol;}
-        else{document.getElementById("uniqueSymbol").innerHTML = "";}
-        if (typeof errorsC.uniqueEasyType != 'undefined'){document.getElementById("uniqueEasyType").innerHTML = errorsC.uniqueEasyType;}
-        else{document.getElementById("uniqueEasyType").innerHTML = "";}
-        if (typeof errorsC.inUse != 'undefined'){document.getElementById("inUse").innerHTML = errorsC.inUse;}
-        else{document.getElementById("inUse").innerHTML = "";}
+        if (typeof errors.symbol != 'undefined'){document.getElementById(`symbol${whichForm}`).innerHTML = errors.symbol;}
+        else{document.getElementById(`symbol${whichForm}`).innerHTML = "";}
+        if (typeof errors.easyType != 'undefined'){document.getElementById(`easyType${whichForm}`).innerHTML = errors.easyType;}
+        else{document.getElementById(`easyType${whichForm}`).innerHTML = "";}
+
+        if(whichForm === "formC"){
+            if (typeof errors.sol != 'undefined'){document.getElementById("sol").innerHTML = errors.sol;}
+            else{document.getElementById("sol").innerHTML = "";}
+            if (typeof errors.poa != 'undefined'){document.getElementById("poa").innerHTML = errors.poa;}
+            else{document.getElementById("poa").innerHTML = "";}
+            if (typeof errors.moa != 'undefined'){document.getElementById("moa").innerHTML = errors.moa;}
+            else{document.getElementById("moa").innerHTML = "";}
+        }
+        if(whichForm === "formV"){
+            if (typeof errors.rounding != 'undefined'){document.getElementById("rounding").innerHTML = errors.rounding;}
+            else{document.getElementById("rounding").innerHTML = "";}
+            if (typeof errors.height != 'undefined'){document.getElementById("height").innerHTML = errors.height;}
+            else{document.getElementById("height").innerHTML = "";}
+            if (typeof errors.backness != 'undefined'){document.getElementById("backness").innerHTML = errors.backness;}
+            else{document.getElementById("backness").innerHTML = "";}
+        }
+
+        if (typeof errors.uniqueSymbol != 'undefined'){document.getElementById(`uniqueSymbol${whichForm}`).innerHTML = errors.uniqueSymbol;}
+        else{document.getElementById(`uniqueSymbol${whichForm}`).innerHTML = "";}
+        if (typeof errors.uniqueEasyType != 'undefined'){document.getElementById(`uniqueEasyType${whichForm}`).innerHTML = errors.uniqueEasyType;}
+        else{document.getElementById(`uniqueEasyType${whichForm}`).innerHTML = "";}
+        if (typeof errors.inUse != 'undefined'){document.getElementById(`inUse${whichForm}`).innerHTML = errors.inUse;}
+        else{document.getElementById(`inUse${whichForm}`).innerHTML = "";}
     }
 
-    const validateInfo = (values) => {
+    const validateInfo = (values, whichForm) => {
         let infoErrors = {}
 
         if(!values.symbol.trim()){
@@ -99,14 +135,28 @@ function PhonemeManager() { //default phonemes for development
         if(!values.easyType.trim()){
             infoErrors.easyType = "Easy Type is required"
         }
-        if(values.sol === "Select One"){
-            infoErrors.sol = "State of the Larynx is required"
+
+        if(whichForm === "formC"){
+            if(values.sol === "Select One"){
+                infoErrors.sol = "State of the Larynx is required"
+            }
+            if(values.poa === "Select One"){
+                infoErrors.poa = "Place of Articulation is required"
+            }
+            if(values.moa === "Select One"){
+                infoErrors.moa = "Manner of Articulation is required"
+            }
         }
-        if(values.poa === "Select One"){
-            infoErrors.poa = "Place of Articulation is required"
-        }
-        if(values.moa === "Select One"){
-            infoErrors.moa = "Manner of Articulation is required"
+        if(whichForm === "formV"){
+            if(values.rounding === "Select One"){
+                infoErrors.rounding = "Rounding is required"
+            }
+            if(values.height === "Select One"){
+                infoErrors.height = "Height is required"
+            }
+            if(values.backness === "Select One"){
+                infoErrors.backness = "Backness is required"
+            }
         }
 
         phonemes.forEach(phoneme => {
@@ -116,8 +166,16 @@ function PhonemeManager() { //default phonemes for development
             if(values.easyType === phoneme.easyType){
                 infoErrors.uniqueEasyType = "Easy Type must be unique"
             }
-            if(values.sol === phoneme.sol && values.moa === phoneme.moa && values.poa === phoneme.poa){
-                infoErrors.inUse = "Phoneme must not already be in use"
+
+            if(whichForm === "formC"){
+                if(values.sol === phoneme.sol && values.moa === phoneme.moa && values.poa === phoneme.poa){
+                    infoErrors.inUse = "Phoneme must not already be in use"
+                }
+            }
+            if(whichForm === "formV"){
+                if(values.rounding === phoneme.rounding && values.height === phoneme.height && values.backness === phoneme.backness){
+                    infoErrors.inUse = "Phoneme must not already be in use"
+                }
             }
         });
         return infoErrors;
@@ -152,10 +210,9 @@ function PhonemeManager() { //default phonemes for development
             for(var i = 0; i < rowPhonemes.length; i++) { //check if any of the phoneme in that row matches the column
                 if(rowPhonemes[i].poa === element) { //the phoneme has that poa
                     phonemesInColumn.push(rowPhonemes[i])
-                    //rowPhonemes.splice(i, 1)
                 }
             }
-            for(var i = 0; i < phonemesInColumn.length; i++){//check if unvoiced of unvoiced
+            for(var i = 0; i < phonemesInColumn.length; i++){//check if unvoiced
                 if(phonemesInColumn[i].sol === "Unvoiced"){
                     result.push(phonemesInColumn[i])
                     phonemesInColumn.splice(i, 1)
@@ -166,7 +223,7 @@ function PhonemeManager() { //default phonemes for development
                 result.push("")
             }
 
-            for(var i = 0; i < phonemesInColumn.length; i++){//check if voiced of unvoiced
+            for(var i = 0; i < phonemesInColumn.length; i++){//check if voiced
                 if(phonemesInColumn[i].sol === "Voiced"){
                     result.push(phonemesInColumn[i])
                     phonemesInColumn.splice(i, 1)
@@ -182,27 +239,26 @@ function PhonemeManager() { //default phonemes for development
 
 
 
-    function getRowContentV(heightToTest){// get consonant table row contents
+    function getRowContentV(heightToTest){// get vowel table row contents
         let row = Object.values(phonemes)
             .filter(phoneme => phoneme.height === heightToTest)
         return row;
     }
 
-    function addRowSpacesV(rowPhonemes) {// add spacing to consonant table rows
+    function addRowSpacesV(rowPhonemes) {// add spacing to vowel table rows
         let resultV = []
 
         headersBackness.forEach(element => { //check what phoneme to put in each column
-            var foundUnrounded = false; //no unvoiced phonemes fit in this column yet
-            var foundRounded = false; //no voiced phonemes fit in this column yet
-            var phonemesInColumn = [] //both voiced and unvoiced phonemes in that column
+            var foundUnrounded = false; //no unrounded phonemes fit in this column yet
+            var foundRounded = false; //no rounded phonemes fit in this column yet
+            var phonemesInColumn = [] //both rounded and unrounded phonemes in that column
             for(var i = 0; i < rowPhonemes.length; i++) { //check if any of the phoneme in that row matches the column
-                if(rowPhonemes[i].backness === element) { //the phoneme has that poa
+                if(rowPhonemes[i].backness === element) { //the phoneme has that backness
                     phonemesInColumn.push(rowPhonemes[i])
-                    //rowPhonemes.splice(i, 1)
                 }
             }
 
-            for(var i = 0; i < phonemesInColumn.length; i++){//check if unvoiced of unvoiced
+            for(var i = 0; i < phonemesInColumn.length; i++){//check if unrounded
                 if(phonemesInColumn[i].rounding === "Unrounded"){
                     resultV.push(phonemesInColumn[i])
                     phonemesInColumn.splice(i, 1)
@@ -214,7 +270,7 @@ function PhonemeManager() { //default phonemes for development
                 resultV.push("")
             }
 
-            for(var i = 0; i < phonemesInColumn.length; i++){//check if voiced of unvoiced
+            for(var i = 0; i < phonemesInColumn.length; i++){//check if rounded
                 if(phonemesInColumn[i].rounding === "Rounded"){
                     resultV.push(phonemesInColumn[i])
                     phonemesInColumn.splice(i, 1)
@@ -306,7 +362,7 @@ function PhonemeManager() { //default phonemes for development
 
         const heightHeader = getConsonantHeadersHeight;
         setHeadersHeight(heightHeader);
-    }, [phonemes]);
+    }, [phonemes, somethingChanged]);
 
     return (
         <div class="flexbox-container"> {/* The form to add consonants */}
@@ -315,7 +371,7 @@ function PhonemeManager() { //default phonemes for development
                 {/* The form to add consonants */}
                 <div class="flexbox-item">
                     <h1>Consonant Editor</h1>
-                    <form onSubmit={handleSubmit}>
+                    <form name="formC" onSubmit={handleSubmit}>
                         <div>
                             <label>Phonetic Symbol</label>
                             <input
@@ -323,8 +379,9 @@ function PhonemeManager() { //default phonemes for development
                                 value={formC.symbol}
                                 onChange={handleChange}
                                 name="symbol"
+                                id="C"
                             />
-                            <p id="symbol" style={{color: 'red'}}></p>
+                            <p id="symbolformC" style={{color: 'red'}}></p>
                         </div>
                         <div>
                             <label>Easy Type</label>
@@ -333,15 +390,16 @@ function PhonemeManager() { //default phonemes for development
                                 value={formC.easyType}
                                 onChange={handleChange}
                                 name="easyType"
+                                id="C"
                             />
-                            <p id="easyType" style={{color: 'red'}}></p>
+                            <p id="easyTypeformC" style={{color: 'red'}}></p>
                         </div>
                         <div>
                             <label class="tooltip">State of the Larynx
                                 <span class="tooltiptext">As the vocal folds vibrate, the resulting vibration produces a "buzzing" quality to the speech, called voice or voicing or pronunciation.
                                 </span>
                             </label>
-                            <select value={formC.sol} onChange={handleChange} name="sol">
+                            <select value={formC.sol} onChange={handleChange} name="sol" id="C">
                                 <option value="Select One">Select One</option>
                                 <option value="Voiced">Voiced</option>
                                 <option value="Unvoiced">Unvoiced</option>
@@ -354,7 +412,7 @@ function PhonemeManager() { //default phonemes for development
                                 </span>
                             </label>
 
-                            <select value={formC.poa} onChange={handleChange} name="poa">
+                            <select value={formC.poa} onChange={handleChange} name="poa" id="C">
                                 <option value="Select One">Select One</option>
                                 <option value="Bilabial">Bilabial</option>
                                 <option value="Labiodental">Labiodental</option>
@@ -375,7 +433,7 @@ function PhonemeManager() { //default phonemes for development
                                 <span class="tooltiptext">The manner of articulation is the configuration and interaction of the articulators (speech organs such as the tongue, lips, and palate) when making a speech sound.
                                 </span>
                             </label>
-                            <select value={formC.moa} onChange={handleChange} name="moa">
+                            <select value={formC.moa} onChange={handleChange} name="moa" id="C">
                                 <option value="Select One">Select One</option>
                                 <option value="Plosive">Plosive</option>
                                 <option value="Nasal">Nasal</option>
@@ -394,11 +452,12 @@ function PhonemeManager() { //default phonemes for development
                                 value={formC.notes}
                                 onChange={handleChange}
                                 name="notes"
+                                id="C"
                             />
                         </div>
-                        <p id="uniqueSymbol" style={{color: 'red'}}></p>
-                        <p id="uniqueEasyType" style={{color: 'red'}}></p>
-                        <p id="inUse" style={{color: 'red'}}></p>
+                        <p id="uniqueSymbolformC" style={{color: 'red'}}></p>
+                        <p id="uniqueEasyTypeformC" style={{color: 'red'}}></p>
+                        <p id="inUseformC" style={{color: 'red'}}></p>
                         <button type="submit">Submit</button>
                     </form>
                 </div>
@@ -418,7 +477,9 @@ function PhonemeManager() { //default phonemes for development
                             <th colSpan="2">{c}</th>
                             {addRowSpacesC(getRowContentC(c)).map(d => //row content with spaces
                                 <td align= "center" key={d.symbol} width= "60px" height= "40px">
-                                    <button>{d.symbol}</button>
+                                    {d.symbol !== undefined ? <div><p>{d.symbol}</p>
+                                    <button onClick={() => Delete(d)}>X</button></div>
+                                    : <p></p>}
                                 </td>    
                                 )}
                         </tr>)}
@@ -427,6 +488,92 @@ function PhonemeManager() { //default phonemes for development
             </div>
 
             <div class="flexbox-row-container">
+                {/* The form to add vowels */}
+                <div class="flexbox-item" overflow-y="hidden">
+                    <h1>Vowel Editor</h1>
+                    <form name="formV" onSubmit={handleSubmit}>
+                        <div>
+                            <label>Phonetic Symbol</label>
+                            <input
+                                type="text"
+                                value={formV.symbol}
+                                onChange={handleChange}
+                                name="symbol"
+                                id="V"
+                            />
+                            <p id="symbolformV" style={{color: 'red'}}></p>
+                        </div>
+                        <div>
+                            <label>Easy Type</label>
+                            <input
+                                type="text"
+                                value={formV.easyType}
+                                onChange={handleChange}
+                                name="easyType"
+                                id="V"
+                            />
+                            <p id="easyTypeformV" style={{color: 'red'}}></p>
+                        </div>
+                        <div>
+                            <label class="tooltip">Rounding
+                                <span class="tooltiptext">ADD DESCRIPTION
+                                </span>
+                            </label>
+                            <select value={formV.rounding} onChange={handleChange} name="rounding" id="V">
+                                <option value="Select One">Select One</option>
+                                <option value="Rounded">Rounded</option>
+                                <option value="Unrounded">Unrounded</option>
+                            </select>
+                            <p id="rounding" style={{color: 'red'}}></p>
+                        </div>
+                        <div>
+                            <label class="tooltip">Height
+                                <span class="tooltiptext">ADD DESCRIPTION
+                                </span>
+                            </label>
+                            <select value={formV.height} onChange={handleChange} name="height" id="V">
+                                <option value="Select One">Select One</option>
+                                <option value="High">High</option>
+                                <option value="Near-high">Near-high</option>
+                                <option value="High-mid">High-mid</option>
+                                <option value="Mid">Mid</option>
+                                <option value="Low-mid">Low-mid</option>
+                                <option value="Low">Low</option>
+                            </select>
+                            <p id="height" style={{color: 'red'}}></p>
+                        </div>
+                        <div>
+                            <label class="tooltip">Backness
+                                <span class="tooltiptext">ADD DESCRIPTION
+                                </span>
+                            </label>
+                            <select value={formV.backness} onChange={handleChange} name="backness" id="V">
+                                <option value="Select One">Select One</option>
+                                <option value="Front">Front</option>
+                                <option value="Near-front">Near-front</option>
+                                <option value="Central">Central</option>
+                                <option value="Near-back">Near-back</option>
+                                <option value="Back">Back</option>
+                            </select>
+                            <p id="backness" style={{color: 'red'}}></p>
+                        </div>
+                        <div>
+                            <label>Notes</label>
+                            <textarea
+                                value={formV.notes}
+                                onChange={handleChange}
+                                name="notes"
+                                id="V"
+                            />
+                        </div>
+                        <p id="uniqueSymbolformV" style={{color: 'red'}}></p>
+                        <p id="uniqueEasyTypeformV" style={{color: 'red'}}></p>
+                        <p id="inUseformV" style={{color: 'red'}}></p>
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+
+
                 <div class="flexbox-item">
                     <table class="table"> {/* Vowel Table */}
                         <tr>
@@ -440,7 +587,9 @@ function PhonemeManager() { //default phonemes for development
                             <th colSpan="2">{c}</th>
                             {addRowSpacesV(getRowContentV(c)).map(d => //row content with spaces
                                 <td align= "center" width= "60px" height= "40px">
-                                    <button>{d.symbol}</button>
+                                    {d.symbol !== undefined ? <div><p>{d.symbol}</p>
+                                    <button onClick={() => Delete(d)}>X</button></div>
+                                    : <p></p>}
                                 </td>    
                                 )}
                         </tr>)}
@@ -448,27 +597,33 @@ function PhonemeManager() { //default phonemes for development
                 </div>
             </div>
 
-            <div class="flexbox-item">
-                {/* List of Consonants */}
-                <h1 class="header">Consonants</h1>
-                <div class="float-container"> 
-                    {Object.values(phonemes).filter(phoneme => phoneme.type === "C").map(phoneme =>(
-                        <Phoneme symbol={phoneme.symbol} easyType={phoneme.easyType} type={phoneme.type} notes={phoneme.notes}
-                        sol={phoneme.sol} poa={phoneme.poa} moa={phoneme.moa}/>
-                    ))}
+
+            <div class="flexbox-row-container">
+                <div class="flexbox-container">
+                    <h1 class="header">Consonants</h1>
+                    <div class="flexbox-scroller">
+                    {/* List of Consonants */}
+                        {Object.values(phonemes).filter(phoneme => phoneme.type === "C").map(phoneme =>(
+                            <Phoneme symbol={phoneme.symbol} easyType={phoneme.easyType} type={phoneme.type} notes={phoneme.notes}
+                            sol={phoneme.sol} poa={phoneme.poa} moa={phoneme.moa}/>
+                        ))}
+                    </div>
+                </div>
+
+                <div class="flexbox-container">
+                    <h1 class="header">Vowels</h1>
+                    <div class="flexbox-scroller">
+                        {/* List of Vowels */}
+                        {Object.values(phonemes).filter(phoneme => phoneme.type === "V").map(phoneme =>(
+                            <Phoneme symbol={phoneme.symbol} easyType={phoneme.easyType} type={phoneme.type} notes={phoneme.notes}
+                            height={phoneme.height} backness={phoneme.backness} rounding={phoneme.rounding} tenseness={phoneme.tenseness}/>
+                        ))}
+                    </div>
                 </div>
             </div>
 
-            <div class="flexbox-item">
-                {/* List of Vowels */}
-                <h1 class="header">Vowels</h1>
-                <div class="float-container">
-                    {Object.values(phonemes).filter(phoneme => phoneme.type === "V").map(phoneme =>(
-                        <Phoneme symbol={phoneme.symbol} easyType={phoneme.easyType} type={phoneme.type} notes={phoneme.notes}
-                        height={phoneme.height} backness={phoneme.backness} rounding={phoneme.rounding} tenseness={phoneme.tenseness}/>
-                    ))}
-                </div>
-            </div>
+            <div class="circle1"></div>
+            <div class="circle2"></div>
         </div>
     );
 }
