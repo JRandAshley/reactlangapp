@@ -18,6 +18,9 @@ function Nav() {
                 <Link style={navStyle} to="/phonemes">
                     <li>Phonemes</li>
                 </Link>
+                <Link style={navStyle} to="/morphemes">
+                    <li>Morphemes</li>
+                </Link>
                 <Link style={navStyle} to="/testing">
                     <li>Testing</li>
                 </Link>

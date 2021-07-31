@@ -46,10 +46,10 @@ class Phoneme extends React.Component {
         }
         else{ //render default
             return(
-                <div class="flex-box-item">
-                    <h3>Symbol: {this.symbol}</h3>
-                    <h3>Easy Type: {this.easyType}</h3>
-                    <h3>Notes: {this.notes}</h3>
+                <div class="flexbox-item-display">
+                    <h3>{this.symbol}</h3>
+                    <p>Easy Type: {this.easyType}</p>
+                    <p>Notes: {this.notes}</p>
                 </div>
             );
         }
@@ -66,13 +66,13 @@ class Consonant extends Phoneme {
     }
     render(){ //render consonant
         return(
-            <div class="flexbox-item">
-                <h3>Symbol: {this.symbol}</h3>
-                <h3>Easy Type: {this.easyType}</h3>
-                <h3>State of the Larynx: {this.sol}</h3>
-                <h3>Place of Articulation: {this.poa}</h3>
-                <h3>Manner of Articulation: {this.moa}</h3>
-                <h3>Notes: {this.notes}</h3>
+            <div class="flexbox-item-display">
+                <h3>{this.symbol}</h3>
+                <p>Easy Type: {this.easyType}</p>
+                <p>State of the Larynx: {this.sol}</p>
+                <p>Place of Articulation: {this.poa}</p>
+                <p>Manner of Articulation: {this.moa}</p>
+                <p>Notes: {this.notes}</p>
             </div>
         );
     }
@@ -86,13 +86,13 @@ class Vowel extends Phoneme {
     }
     render(){ //render vowel
         return(
-            <div class="flexbox-item">
-                <h3>Symbol: {this.symbol}</h3>
-                <h3>Easy Type: {this.easyType}</h3>
-                <h3>Height of Tongue: {this.height}</h3>
-                <h3>Backness of Tongue: {this.backness}</h3>
-                <h3>Rounding of Lips: {this.rounding}</h3>
-                <h3>Notes: {this.notes}</h3>
+            <div class="flexbox-item-display">
+                <h3>{this.symbol}</h3>
+                <p>Easy Type: {this.easyType}</p>
+                <p>Height of Tongue: {this.height}</p>
+                <p>Backness of Tongue: {this.backness}</p>
+                <p>Rounding of Lips: {this.rounding}</p>
+                <p>Notes: {this.notes}</p>
             </div>
         );
     }

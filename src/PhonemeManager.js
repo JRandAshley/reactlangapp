@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import Phoneme from './Phoneme';
 import "./App.scss";
+import Axios from 'axios';
+import axios from 'axios';
 
 function PhonemeManager() { //default phonemes for development
     const initialData = [
@@ -30,36 +32,111 @@ function PhonemeManager() { //default phonemes for development
         height:'Low', backness:'Central', rounding:'Unrounded'}
     ]
     
-    const [phonemes, setPhonemes] = useState(initialData)
-
-    const [formC, setFormC] = useState({//consonant form contents
-        symbol: "", easyType: "", type: "C", notes: "",
+    const [phonemes, setPhonemes] = useState([])
+    
+    const [formC, setFormC] = useState({//consonant form default contents
+        id: -1, symbol: "", easyType: "", type: "C", notes: "",
         sol: "Select One", poa: "Select One", moa: "Select One"
     })
-    const [formV, setFormV] = useState({//consonant form contents
-        symbol: "", easyType: "", type: "V", notes: "",
+    const [formV, setFormV] = useState({//consonant form default contents
+        id: -1, symbol: "", easyType: "", type: "V", notes: "",
         height: "Select One", backness: "Select One", rounding: "Select One"
     })
 
-    const [somethingChanged, setSomethingChanged] = useState(false)
+    let errors = {}//the list of form errors to be displayed
 
-    let errors = {}
+    const sleep = (ms) => {
+        return new Promise(
+          resolve => setTimeout(resolve, ms)
+        );
+      }
 
-    const forceUpdate = () => {
-        setSomethingChanged(prevState => !prevState);
+    const deletePhoneme = (phonemeToDelete) => {
+        new Promise((resolve, reject) => {
+            Axios.post('http://localhost:3001/api/delete/', {
+                symbol: phonemeToDelete.symbol
+            })
+            resolve(`deleted ${phonemeToDelete.symbol}`)
+        })
     }
 
-    const Delete = (phonemeToDelete) => {
-        var index = phonemes.indexOf(phonemeToDelete);
-        if (index > -1) { //Make sure item is present in the array, without if condition, -n indexes will be considered from the end of the array.
-            var abc = phonemes;
-            abc.splice(index, 1);
-            setPhonemes(abc);
-            forceUpdate();
+    const getPhonemes = () => {
+        new Promise((resolve, reject) => {
+            Axios.get("http://localhost:3001/api/get").then((response) => {
+                setPhonemes(response.data);
+            });
+            resolve("updated phonemes from database")
+        })
+    }
+
+    const getPhoneme = (phonemeId) => {
+        let phonemeToReturn = {}
+        new Promise((resolve, reject) => {
+            Axios.post('http://localhost:3001/api/getSpecific/', {
+                id: phonemeId
+            }).then((response) => {
+                console.log(response.data[0])
+                phonemeToReturn = response.data[0]
+            });
+        })
+        sleep(2000)
+        console.log(phonemeToReturn)
+        return phonemeToReturn;
+    }
+
+    const Delete = async (phonemeToDelete) => {//deletes the phoneme passed into it
+        try {    
+            const response = await deletePhoneme(phonemeToDelete)
+
+            await sleep(250);
+
+            await getPhonemes();
+        } catch(err) {
+            console.log(err)
         }
     }
 
-    const handleChange = (event) => {
+    const PrepUpdate = async (form) => {
+        let dataToUpdate = {
+            id: -1,
+            symbol: "",
+            easyType: "",
+            sol: "",
+            poa: "",
+            moa: "",
+            notes: ""
+        }
+
+        let dataToUpdate2 = await getPhoneme(form.id); 
+        /*Axios.get('http://localhost:3001/api/getSpecific/', {
+                id: form.id
+        }).then((response) => {
+            console.log(response)
+            console.log(response.data)
+            console.log(response.data.symbol)
+            //dataToUpdate = response.data
+        });
+        */
+
+        await sleep(2000);
+
+        console.log(dataToUpdate)
+        console.log(dataToUpdate2)
+
+        if(form.type === "C"){
+            setFormC({
+                id: dataToUpdate.id,
+                symbol: dataToUpdate.symbol,
+                easyType: dataToUpdate.easyType,
+                sol: dataToUpdate.sol,
+                poa: dataToUpdate.poa,
+                moa: dataToUpdate.moa,
+                notes: dataToUpdate.notes
+            })
+        }
+    }
+
+    const handleChange = (event) => {//allows the forms to change
         const {name, value, id} = event.target
 
         if(id === "C"){
@@ -76,32 +153,46 @@ function PhonemeManager() { //default phonemes for development
         }
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = (event) => {//adds the submitted phoneme if it passes validation
         event.preventDefault() //prevents the page from automatically reloading
 
-        const whichForm = event.target.name;
+        const whichForm = event.target.name;//is it the consonsnant form or vowel form
 
-        const validatedErrors = validateInfo(eval(whichForm), whichForm)
+        const validatedErrors = validateInfo(eval(whichForm), whichForm)//checks for errors
 
         errors = validatedErrors;
-        console.log(errors)
         
 
-        let errorsFound = !(Object.keys(errors).length === 0 && errors.constructor === Object)
+        let errorsFound = !(Object.keys(errors).length === 0 && errors.constructor === Object)//checks if errors were found
         
-        if(!errorsFound){
-            setPhonemes(prevState => ([
+        if(!errorsFound){//no errors found
+            let values = eval(whichForm)
+            Axios.post('http://localhost:3001/api/insert', {//posts the new phoneme to the database
+                symbol: values.symbol, 
+                easyType: values.easyType,
+                type: values.type,
+                notes: values.notes,
+                sol: values.sol,
+                poa: values.poa,
+                moa: values.moa,
+                height: values.height,
+                backness: values.backness,
+                rounding: values.rounding
+            });
+            setPhonemes(prevState => ([//update phonemes in useState
                 ...prevState,
                 eval(whichForm)
-            ]))
+            ]));
         }
 
+
+        //DISPLAY ERRORS
         if (typeof errors.symbol != 'undefined'){document.getElementById(`symbol${whichForm}`).innerHTML = errors.symbol;}
         else{document.getElementById(`symbol${whichForm}`).innerHTML = "";}
         if (typeof errors.easyType != 'undefined'){document.getElementById(`easyType${whichForm}`).innerHTML = errors.easyType;}
         else{document.getElementById(`easyType${whichForm}`).innerHTML = "";}
 
-        if(whichForm === "formC"){
+        if(whichForm === "formC"){//consonant only errors
             if (typeof errors.sol != 'undefined'){document.getElementById("sol").innerHTML = errors.sol;}
             else{document.getElementById("sol").innerHTML = "";}
             if (typeof errors.poa != 'undefined'){document.getElementById("poa").innerHTML = errors.poa;}
@@ -109,7 +200,7 @@ function PhonemeManager() { //default phonemes for development
             if (typeof errors.moa != 'undefined'){document.getElementById("moa").innerHTML = errors.moa;}
             else{document.getElementById("moa").innerHTML = "";}
         }
-        if(whichForm === "formV"){
+        if(whichForm === "formV"){//vowel only errors
             if (typeof errors.rounding != 'undefined'){document.getElementById("rounding").innerHTML = errors.rounding;}
             else{document.getElementById("rounding").innerHTML = "";}
             if (typeof errors.height != 'undefined'){document.getElementById("height").innerHTML = errors.height;}
@@ -126,7 +217,7 @@ function PhonemeManager() { //default phonemes for development
         else{document.getElementById(`inUse${whichForm}`).innerHTML = "";}
     }
 
-    const validateInfo = (values, whichForm) => {
+    const validateInfo = (values, whichForm) => {//check the form for errors
         let infoErrors = {}
 
         if(!values.symbol.trim()){
@@ -350,6 +441,25 @@ function PhonemeManager() { //default phonemes for development
 
     ////////////////////////////////////////////////////////////////////////
 
+    useEffect(() => {
+        console.log("On mount get")
+        //Axios.get("http://localhost:3001/api/get").then((response) => {
+        //    setPhonemes(response.data);
+        //})
+        getPhonemes();
+    }, []);
+
+    /*useEffect(() => {
+        console.log("get after something changed")
+        async function fetchData() {
+            const request = await axios.get("http://localhost:3001/api/get");
+                setPhonemes(request.data);
+                console.log(request.data);
+            return request;
+        }
+        fetchData();
+    }, [somethingChanged]);*/
+
     useEffect(() => {//update consonant table headers when phonemes change
         const poaHeader = getConsonantHeadersPOA;
         setHeadersPOA(poaHeader);
@@ -362,16 +472,33 @@ function PhonemeManager() { //default phonemes for development
 
         const heightHeader = getConsonantHeadersHeight;
         setHeadersHeight(heightHeader);
-    }, [phonemes, somethingChanged]);
+    }, [phonemes]);
+
+    //useEffect(() => {
+    //    console.log("On mount get")
+    //    Axios.get("http://localhost:3001/api/get").then((response) => {
+    //        setPhonemes(response.data);
+    //    })
+    //}, []);
 
     return (
         <div class="flexbox-container"> {/* The form to add consonants */}
 
+            <h1 align="center">Phonemes</h1>
+
             <div class="flexbox-row-container">
                 {/* The form to add consonants */}
                 <div class="flexbox-item">
-                    <h1>Consonant Editor</h1>
+                    <h2 class="header">Consonant Editor</h2>
                     <form name="formC" onSubmit={handleSubmit}>
+                    {/*<h3 id="C" name="id">{formC.id}</h3>*/}
+                        <div>
+                            {/*formC.id !== -1 ? <div>
+                                <label>Previous Symbol</label>
+                                <p value={formC.symbol} />
+                            </div>
+                            : <p></p>*/}
+                        </div>
                         <div>
                             <label>Phonetic Symbol</label>
                             <input
@@ -459,6 +586,10 @@ function PhonemeManager() { //default phonemes for development
                         <p id="uniqueEasyTypeformC" style={{color: 'red'}}></p>
                         <p id="inUseformC" style={{color: 'red'}}></p>
                         <button type="submit">Submit</button>
+                        {formC.id !== -1 ? <div>
+                            <button onClick={() => Delete()}>Update</button>
+                        </div>
+                        : <p></p>}
                     </form>
                 </div>
                 
@@ -477,8 +608,11 @@ function PhonemeManager() { //default phonemes for development
                             <th colSpan="2">{c}</th>
                             {addRowSpacesC(getRowContentC(c)).map(d => //row content with spaces
                                 <td align= "center" key={d.symbol} width= "60px" height= "40px">
-                                    {d.symbol !== undefined ? <div><p>{d.symbol}</p>
-                                    <button onClick={() => Delete(d)}>X</button></div>
+                                    {d.symbol !== undefined ? 
+                                    <div><p>{d.symbol}</p>
+                                    <button onClick={() => Delete(d)}>X</button>
+                                    {/*<button onClick={() => PrepUpdate(d)}>Update</button>*/}
+                                    </div>
                                     : <p></p>}
                                 </td>    
                                 )}
@@ -490,8 +624,9 @@ function PhonemeManager() { //default phonemes for development
             <div class="flexbox-row-container">
                 {/* The form to add vowels */}
                 <div class="flexbox-item" overflow-y="hidden">
-                    <h1>Vowel Editor</h1>
+                    <h2 class="header">Vowel Editor</h2>
                     <form name="formV" onSubmit={handleSubmit}>
+                    <input type="hidden" id="V" name="id" value={formV.id}/>
                         <div>
                             <label>Phonetic Symbol</label>
                             <input
@@ -600,30 +735,27 @@ function PhonemeManager() { //default phonemes for development
 
             <div class="flexbox-row-container">
                 <div class="flexbox-container">
-                    <h1 class="header">Consonants</h1>
+                    <h2 class="header">Consonants</h2>
                     <div class="flexbox-scroller">
                     {/* List of Consonants */}
                         {Object.values(phonemes).filter(phoneme => phoneme.type === "C").map(phoneme =>(
-                            <Phoneme symbol={phoneme.symbol} easyType={phoneme.easyType} type={phoneme.type} notes={phoneme.notes}
+                            <Phoneme key={phoneme.id} symbol={phoneme.symbol} easyType={phoneme.easyType} type={phoneme.type} notes={phoneme.notes}
                             sol={phoneme.sol} poa={phoneme.poa} moa={phoneme.moa}/>
                         ))}
                     </div>
                 </div>
 
                 <div class="flexbox-container">
-                    <h1 class="header">Vowels</h1>
+                    <h2 class="header">Vowels</h2>
                     <div class="flexbox-scroller">
                         {/* List of Vowels */}
                         {Object.values(phonemes).filter(phoneme => phoneme.type === "V").map(phoneme =>(
-                            <Phoneme symbol={phoneme.symbol} easyType={phoneme.easyType} type={phoneme.type} notes={phoneme.notes}
+                            <Phoneme key={phoneme.id} symbol={phoneme.symbol} easyType={phoneme.easyType} type={phoneme.type} notes={phoneme.notes}
                             height={phoneme.height} backness={phoneme.backness} rounding={phoneme.rounding} tenseness={phoneme.tenseness}/>
                         ))}
                     </div>
                 </div>
             </div>
-
-            <div class="circle1"></div>
-            <div class="circle2"></div>
         </div>
     );
 }

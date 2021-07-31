@@ -4,6 +4,7 @@ import PhonemeManager from './PhonemeManager';
 import Testing from './Testing';
 import Nav from './Nav';
 import {BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import MorphemeManager from './MorphemeManager';
 
 
 /*class App extends React.Component{
@@ -28,6 +29,7 @@ function App(){
                 <Switch>
                     <Route path="/" exact component={Home} />
                     <Route path="/phonemes" component={PhonemeManager}/>
+                    <Route path="/morphemes" component={MorphemeManager}/>
                     <Route path="/testing" component={Testing}/>
                 </Switch>
                 <hr />
